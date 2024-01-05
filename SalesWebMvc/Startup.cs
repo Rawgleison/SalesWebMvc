@@ -36,8 +36,14 @@ namespace SalesWebMvc
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddDbContext<SalesWebMvcContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("SalesWebMvcContext")));
+            services.AddDbContext<SalesWebMvcContext>(options => options.UseSqlServer(
+                "Server=localhost;"+
+                "Database=SalesWebMvcContext;" +
+                "Trusted_Connection=False;" +
+                "User Id=sa;" +
+                "Password=Seguros1129!;" +
+                "MultipleActiveResultSets=true")); 
+                    //options.UseSqlServer(Configuration.GetConnectionString("SalesWebMvcContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
