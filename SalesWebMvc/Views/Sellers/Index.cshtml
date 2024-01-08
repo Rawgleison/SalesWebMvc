@@ -4,9 +4,11 @@
 }
 
 <h2>@ViewData["Title"]</h2>
-
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
 <table class="table table-hover table-responsive">
-    <thead class="success">
+    <thead class="alert-success">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -27,7 +29,7 @@
 
         @foreach (var item in Model)
         {
-        <tr>
+        <tr onclick="location.href='@Url.Action("Details","Sellers",new { id = item.Id })'" >
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
