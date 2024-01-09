@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -66,12 +67,12 @@ namespace SalesWebMvc.Controllers
         {
             if(id == null)
             {
-                return NotFound();
+                return RedirectError("Id not fond!!!!");
             }
             var seller = _sellerService.findById(id.Value);
             if(seller == null)
             {
-                return NotFound();
+                return RedirectError("Id not fond!!!!");
             }
             var departments = _departmentService.FindAll();
             var viewModel = new SellerFormViewModel { Departments = departments, Seller = seller };
@@ -100,6 +101,22 @@ namespace SalesWebMvc.Controllers
             {
                 return NotFound();
             }
+        }
+
+        private IActionResult RedirectError(string msg)
+        {
+            return RedirectToAction(nameof(Error),new { message = msg});
+        }
+
+        public IActionResult Error(string message)
+        {
+            var viewModel = new ErrorViewModel
+            {
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            return View(viewModel);
         }
     }
 }
