@@ -32,17 +32,26 @@ namespace SalesWebMvc.Controllers
 
         public IActionResult Create()
         {
-            var departments = _departmentService.FindAll();
-            var viewModel = new SellerFormViewModel { Departments = departments };
-            return View(viewModel);
+            return ViewCreate();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken] //Valida contra ataque de CSSR
         public IActionResult Create(Seller seller)
         {
+            if (!ModelState.IsValid)
+            {
+                return ViewCreate(seller);
+            }
             _sellerService.Insert(seller);
             return RedirectToAction(nameof(Index));
+        }
+
+        private IActionResult ViewCreate(Seller seller = null)
+        {
+            var departments = _departmentService.FindAll();
+            var viewModel = new SellerFormViewModel { Departments = departments, Seller = seller };
+            return View(viewModel);
         }
 
         public IActionResult Details(int id)
@@ -67,7 +76,7 @@ namespace SalesWebMvc.Controllers
         {
             if(id == null)
             {
-                return RedirectError("Id not fond!!!!");
+                return RedirectError("Id not provided.");
             }
             var seller = _sellerService.findById(id.Value);
             if(seller == null)
@@ -86,6 +95,11 @@ namespace SalesWebMvc.Controllers
             if (id != seller.Id)
             {
                 return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ViewCreate(seller);
             }
 
             try
