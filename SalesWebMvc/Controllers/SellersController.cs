@@ -24,73 +24,73 @@ namespace SalesWebMvc.Controllers
             _departmentService = departmentService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var list = _sellerService.FindAll();
+            var list = await _sellerService.FindAllAsync();
             return View(list);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return ViewCreate();
+            return await ViewCreateAsync();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken] //Valida contra ataque de CSSR
-        public IActionResult Create(Seller seller)
+        public async Task<IActionResult> CreateAsync(Seller seller)
         {
             if (!ModelState.IsValid)
             {
-                return ViewCreate(seller);
+                return await ViewCreateAsync(seller);
             }
-            _sellerService.Insert(seller);
+            await _sellerService.InsertAsync(seller);
             return RedirectToAction(nameof(Index));
         }
 
-        private IActionResult ViewCreate(Seller seller = null)
+        private async Task<IActionResult> ViewCreateAsync(Seller seller = null)
         {
-            var departments = _departmentService.FindAll();
+            var departments = await _departmentService.FindAllAsync();
             var viewModel = new SellerFormViewModel { Departments = departments, Seller = seller };
             return View(viewModel);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            return View(_sellerService.findById(id));
+            return View(await _sellerService.findByIdAsync(id));
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return View(_sellerService.findById(id));
+            return View(await _sellerService.findByIdAsync(id));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(Seller seller)
+        public async Task<IActionResult> Delete(Seller seller)
         {
-            _sellerService.Delete(seller);
+            await _sellerService.DeleteAsync(seller);
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if(id == null)
             {
                 return RedirectError("Id not provided.");
             }
-            var seller = _sellerService.findById(id.Value);
+            var seller = await _sellerService.findByIdAsync(id.Value);
             if(seller == null)
             {
                 return RedirectError("Id not fond!!!!");
             }
-            var departments = _departmentService.FindAll();
+            var departments = await _departmentService.FindAllAsync();
             var viewModel = new SellerFormViewModel { Departments = departments, Seller = seller };
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Seller seller)
+        public async Task<IActionResult> Edit(int id, Seller seller)
         {
             if (id != seller.Id)
             {
@@ -99,12 +99,12 @@ namespace SalesWebMvc.Controllers
 
             if (!ModelState.IsValid)
             {
-                return ViewCreate(seller);
+                return await ViewCreateAsync(seller);
             }
 
             try
             {
-                _sellerService.Update(seller);
+                await _sellerService.UpdateAsync(seller);
                 return RedirectToAction(nameof(Index));
             }
             catch (DbConcurrencyException)
